@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
@@ -14,7 +14,14 @@ const geistMono = localFont({
   weight: '100 900',
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // user-scalable não é bloqueado (WCAG 2.5.5)
+}
+
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
   title: {
     default: 'Tabela Periódica',
     template: '%s | Tabela Periódica',
@@ -22,6 +29,7 @@ export const metadata: Metadata = {
   description: 'Tabela periódica interativa com todos os 118 elementos químicos em português. Explore propriedades, categorias e curiosidades de cada elemento.',
   keywords: ['tabela periódica', 'elementos químicos', 'química', 'educação'],
   authors: [{ name: 'Bortoli' }],
+  icons: { icon: '/icon.svg', apple: '/icon.svg' },
   openGraph: {
     title: 'Tabela Periódica',
     description: 'Tabela periódica interativa com todos os 118 elementos químicos em português.',
