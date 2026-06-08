@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Foco visível para acessibilidade (WCAG 2.1 AA) */
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+}
+
+/* Scroll horizontal sempre disponível na tabela */
+.periodic-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* scrollbar discreta */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.periodic-table-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.periodic-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.periodic-table-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Tamanhos dos cards por breakpoint via variáveis CSS */
+
+/* Mobile landscape / tablet pequeno: cards compactos */
+.element-grid {
+  --cell-symbol-size: 0.75rem;
+  --cell-name-size: 0.4rem;
+  --cell-number-size: 0.45rem;
+  --cell-mass-size: 0.4rem;
+  --cell-padding: 0.15rem;
+  --cell-min-width: 480px;
+}
+
+/* Tablet (md: 768px+) */
+@media (min-width: 768px) {
+  .element-grid {
+    --cell-symbol-size: 0.875rem;
+    --cell-name-size: 0.45rem;
+    --cell-number-size: 0.5rem;
+    --cell-mass-size: 0.45rem;
+    --cell-padding: 0.2rem;
+    --cell-min-width: 560px;
+  }
+}
+
+/* Desktop (xl: 1280px+) */
+@media (min-width: 1280px) {
+  .element-grid {
+    --cell-symbol-size: 1rem;
+    --cell-name-size: 0.5rem;
+    --cell-number-size: 0.55rem;
+    --cell-mass-size: 0.45rem;
+    --cell-padding: 0.25rem;
+    --cell-min-width: 700px;
+  }
+}
+
+/* Desktop grande (2xl: 1536px+) */
+@media (min-width: 1536px) {
+  .element-grid {
+    --cell-symbol-size: 1.125rem;
+    --cell-name-size: 0.55rem;
+    --cell-number-size: 0.6rem;
+    --cell-mass-size: 0.5rem;
+    --cell-padding: 0.35rem;
+    --cell-min-width: 800px;
+  }
+}
