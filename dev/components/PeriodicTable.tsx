@@ -78,11 +78,11 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
   const isMobilePortrait = orientation === 'portrait'
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-3 items-center justify-between">
+    <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="flex flex-wrap gap-2 sm:gap-3 items-center justify-between">
         <SearchBar value={search} onChange={setSearch} resultCount={resultCount} />
         {isMobilePortrait && (
-          <p className="text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
+          <p className="text-xs text-slate-500 dark:text-slate-400 w-full sm:w-auto" aria-live="polite">
             Gire o dispositivo para ver a tabela completa
           </p>
         )}
@@ -94,18 +94,25 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
         <MobileList elements={elements} search={search} activeCategory={activeCategory} />
       ) : (
         <div
-          className="periodic-table-scroll"
+          className="periodic-table-scroll element-grid"
           role="grid"
           aria-label="Tabela periódica dos elementos químicos"
           aria-rowcount={7}
           aria-colcount={18}
         >
-          <div className="grid grid-cols-periodic gap-0.5 min-w-[600px]">
+          <div
+            className="grid grid-cols-periodic gap-px"
+            style={{ minWidth: 'var(--cell-min-width, 560px)' }}
+          >
             {mainGrid.map((row, rowIdx) =>
               row.map((el, colIdx) => renderCard(el, `${rowIdx}-${colIdx}`))
             )}
           </div>
-          <div className="mt-2 grid grid-cols-periodic gap-0.5 min-w-[600px]" aria-label="Lantanídeos e Actinídeos">
+          <div
+            className="mt-1 grid grid-cols-periodic gap-px"
+            style={{ minWidth: 'var(--cell-min-width, 560px)' }}
+            aria-label="Lantanídeos e Actinídeos"
+          >
             <div className="col-span-3" aria-hidden="true" />
             {lantGrid.map((el, i) => renderCard(el, `lant-${i}`))}
             <div aria-hidden="true" />

@@ -30,7 +30,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      <main id="conteudo-principal" className="flex-1 px-4 py-6 max-w-screen-2xl mx-auto w-full">
+      <main id="conteudo-principal" className="flex-1 px-2 sm:px-4 py-4 sm:py-6 max-w-screen-2xl mx-auto w-full">
         <PeriodicTable elements={elements} />
       </main>
 
