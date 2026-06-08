@@ -6,9 +6,11 @@ interface ElementCardProps {
   element: Element
   isHighlighted?: boolean
   isDimmed?: boolean
+  tabIndex?: number
+  onFocus?: (number: number) => void
 }
 
-export function ElementCard({ element, isHighlighted, isDimmed }: ElementCardProps) {
+export function ElementCard({ element, isHighlighted, isDimmed, tabIndex = -1, onFocus }: ElementCardProps) {
   const colors = CATEGORY_COLORS[element.category]
   const mass = element.atomic_mass
     ? element.atomic_mass.toFixed(element.atomic_mass < 10 ? 4 : element.atomic_mass < 100 ? 3 : 2)
@@ -17,10 +19,13 @@ export function ElementCard({ element, isHighlighted, isDimmed }: ElementCardPro
   return (
     <Link
       href={`/elemento/${element.symbol.toLowerCase()}`}
+      tabIndex={tabIndex}
+      data-element-number={element.number}
+      onFocus={() => onFocus?.(element.number)}
       className={[
         'block rounded transition-all duration-150 select-none',
         'border border-transparent hover:border-slate-400 dark:hover:border-slate-500',
-        'focus-visible-ring',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1',
         colors.bg, colors.bgDark, colors.text, colors.textDark,
         isDimmed ? 'opacity-20' : 'opacity-100',
         isHighlighted ? 'ring-2 ring-slate-600 dark:ring-slate-300' : '',

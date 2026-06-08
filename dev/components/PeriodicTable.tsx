@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import type { Element, Category } from '@/types/element'
 import { ElementCard, ElementCardEmpty } from './ElementCard'
 import { Legend } from './Legend'
 import { SearchBar } from './SearchBar'
 import { MobileList } from './MobileList'
 import { useOrientation } from '@/hooks/useOrientation'
+import { useGridKeyboard } from '@/hooks/useGridKeyboard'
 
+// [row, col] — linhas 8 e 9 são lantanídeos e actinídeos
 const ELEMENT_POSITIONS: Record<number, [number, number]> = {
   1: [1,1], 2: [1,18],
   3: [2,1], 4: [2,2], 5: [2,13], 6: [2,14], 7: [2,15], 8: [2,16], 9: [2,17], 10: [2,18],
@@ -20,6 +22,11 @@ const ELEMENT_POSITIONS: Record<number, [number, number]> = {
   90: [9,4], 91: [9,5], 92: [9,6], 93: [9,7], 94: [9,8], 95: [9,9], 96: [9,10], 97: [9,11], 98: [9,12], 99: [9,13], 100: [9,14], 101: [9,15], 102: [9,16], 103: [9,17],
 }
 
+// Mapa "row,col" → número do elemento para navegação por teclado
+const GRID_MAP = new Map<string, number>(
+  Object.entries(ELEMENT_POSITIONS).map(([num, [row, col]]) => [`${row},${col}`, Number(num)])
+)
+
 interface PeriodicTableProps {
   elements: Element[]
 }
@@ -28,6 +35,8 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<Category | null>(null)
   const orientation = useOrientation()
+  const gridRef = useRef<HTMLDivElement>(null)
+  const { focusedNumber, setFocusedNumber, handleKeyDown } = useGridKeyboard(gridRef, GRID_MAP)
 
   const filteredNumbers = useMemo(() => {
     if (!search && !activeCategory) return null
@@ -53,7 +62,6 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
     setActiveCategory((prev) => (prev === category ? null : category))
   }
 
-  // grade principal 7×18
   const mainGrid: (Element | null)[][] = Array.from({ length: 7 }, () => Array(18).fill(null))
   const lantGrid: (Element | null)[] = Array(14).fill(null)
   const actGrid: (Element | null)[] = Array(14).fill(null)
@@ -71,10 +79,20 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
     if (!el) return <ElementCardEmpty key={key} />
     const isHighlighted = filteredNumbers ? filteredNumbers.has(el.number) : false
     const isDimmed = filteredNumbers ? !filteredNumbers.has(el.number) : false
-    return <ElementCard key={el.number} element={el} isHighlighted={isHighlighted} isDimmed={isDimmed} />
+    // Roving tabindex: só o elemento focado tem tabIndex=0
+    const tabIndex = el.number === focusedNumber ? 0 : -1
+    return (
+      <ElementCard
+        key={el.number}
+        element={el}
+        isHighlighted={isHighlighted}
+        isDimmed={isDimmed}
+        tabIndex={tabIndex}
+        onFocus={setFocusedNumber}
+      />
+    )
   }
 
-  // Mobile portrait → lista agrupada por categoria
   const isMobilePortrait = orientation === 'portrait'
 
   return (
@@ -93,16 +111,20 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
       {isMobilePortrait ? (
         <MobileList elements={elements} search={search} activeCategory={activeCategory} />
       ) : (
+        /* eslint-disable jsx-a11y/interactive-supports-focus */
         <div
+          ref={gridRef}
           className="periodic-table-scroll element-grid"
           role="grid"
-          aria-label="Tabela periódica dos elementos químicos"
-          aria-rowcount={7}
+          aria-label="Tabela periódica dos elementos químicos. Use as setas do teclado para navegar entre elementos."
+          aria-rowcount={9}
           aria-colcount={18}
+          onKeyDown={handleKeyDown}
         >
           <div
             className="grid grid-cols-periodic gap-px"
             style={{ minWidth: 'var(--cell-min-width, 560px)' }}
+            role="rowgroup"
           >
             {mainGrid.map((row, rowIdx) =>
               row.map((el, colIdx) => renderCard(el, `${rowIdx}-${colIdx}`))
@@ -111,6 +133,7 @@ export function PeriodicTable({ elements }: PeriodicTableProps) {
           <div
             className="mt-1 grid grid-cols-periodic gap-px"
             style={{ minWidth: 'var(--cell-min-width, 560px)' }}
+            role="rowgroup"
             aria-label="Lantanídeos e Actinídeos"
           >
             <div className="col-span-3" aria-hidden="true" />
