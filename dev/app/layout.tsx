@@ -21,6 +21,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://tabela-periodica.vercel.app'),
   manifest: '/manifest.json',
   title: {
     default: 'Tabela Periódica',
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Tabela Periódica',
     description: 'Tabela periódica interativa com todos os 118 elementos químicos em português.',
+    url: '/',
     locale: 'pt_BR',
     type: 'website',
   },
